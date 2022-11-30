@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.vj20222.database.AppDataBase;
 import com.example.vj20222.entities.Contact;
 import com.example.vj20222.factories.RetrofitFactory;
 import com.example.vj20222.services.ContactService;
@@ -29,6 +30,7 @@ public class EditContactActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_contact);
+        AppDataBase db = AppDataBase.getInstance(this);
         etNameCe = findViewById(R.id.etNameCe);
         etTelefonoCe = findViewById(R.id.etTelefonoCe);
         ivImageCe = findViewById(R.id.ivImageCe);
@@ -40,6 +42,7 @@ public class EditContactActivity extends AppCompatActivity {
         service.get(id).enqueue(new Callback<Contact>() {
             @Override
             public void onResponse(Call<Contact> call, Response<Contact> response) {
+                Toast.makeText(EditContactActivity.this,"mockapi",Toast.LENGTH_LONG).show();
                 Contact data = response.body();
                 etNameCe.setText(data.name);
                 etTelefonoCe.setText(data.telefono);
@@ -50,32 +53,44 @@ public class EditContactActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Contact> call, Throwable t) {
-                Toast.makeText(EditContactActivity.this,"Error",Toast.LENGTH_LONG);
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
+                Toast.makeText(EditContactActivity.this,"BaseDeDatos",Toast.LENGTH_LONG).show();
+                Contact data = db.contactDao().find(id);
+                etNameCe.setText(data.name);
+                etTelefonoCe.setText(data.telefono);
+                Picasso.get().load(data.avatar).into(ivImageCe);
+                img = data.avatar;
+
             }
         });
         btnEditarCe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(etNameCe.getText().toString().equals("") || etTelefonoCe.getText().toString().equals("")){
-                    Toast.makeText(EditContactActivity.this,"Campos Vacios",Toast.LENGTH_LONG);
+                    Toast.makeText(EditContactActivity.this,"Campos Vacios",Toast.LENGTH_LONG).show();
                 }else{
                     Contact data = new Contact();
                     data.name = etNameCe.getText().toString();
                     data.telefono = etTelefonoCe.getText().toString();
                     data.avatar = img;
-
+                    Contact data2 = new Contact();
+                    data2.avatar = img;
+                    data2.telefono = etTelefonoCe.getText().toString();
+                    data2.name = etNameCe.getText().toString();
+                    data2.id = id;
                     service.update(data,id).enqueue(new Callback<Contact>() {
                         @Override
                         public void onResponse(Call<Contact> call, Response<Contact> response) {
+
+                            db.contactDao().update(data2);
                             Intent intent = new Intent(EditContactActivity.this, ContactActivity.class);
                             startActivity(intent);
                         }
 
                         @Override
                         public void onFailure(Call<Contact> call, Throwable t) {
-
+                            db.contactDao().update(data2);
+                            Intent intent = new Intent(EditContactActivity.this, ContactActivity.class);
+                            startActivity(intent);
                         }
                     });
                 }

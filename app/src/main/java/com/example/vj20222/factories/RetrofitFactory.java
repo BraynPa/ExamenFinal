@@ -41,7 +41,7 @@ public class RetrofitFactory {
 
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://63593923ff3d7bddb99c6ddc.mockapi.io/")
+                .baseUrl("https://63590711ff3d7bddb996f285.mockapi.io/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();

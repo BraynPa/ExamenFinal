@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void redirectToMainActivity() {
-        Intent intent = new Intent(getApplicationContext(), ContactActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ButtonMainActivity.class);
         startActivity(intent);
         finish();
     }

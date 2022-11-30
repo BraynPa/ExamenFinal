@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Users>> call, Response<List<Users>> response) {
                 Log.i("MAIN_APP", new Gson().toJson(response.body()));
+
             }
 
             @Override

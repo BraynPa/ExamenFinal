@@ -18,6 +18,7 @@ import com.example.vj20222.EditContactActivity;
 import com.example.vj20222.FormContactActivity;
 import com.example.vj20222.LoginActivity;
 import com.example.vj20222.R;
+import com.example.vj20222.database.AppDataBase;
 import com.example.vj20222.entities.Contact;
 import com.example.vj20222.factories.RetrofitFactory;
 import com.example.vj20222.services.ContactService;
@@ -57,6 +58,12 @@ public class ContactAdapter extends RecyclerView.Adapter{
         Button btnEliminarC = holder.itemView.findViewById(R.id.btnEliminarC);
         int id = data.get(position).id;
         String dato = id+"";
+        AppDataBase db = AppDataBase.getInstance(holder.itemView.getContext());
+        Contact data2 = new Contact();
+        data2.avatar = data.get(position).avatar;
+        data2.telefono = data.get(position).telefono;
+        data2.name = data.get(position).name;
+        data2.id = id;
         btnEliminarC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,12 +73,14 @@ public class ContactAdapter extends RecyclerView.Adapter{
                 service.delete(id).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
+                        db.contactDao().delete(data2);
                         Intent intent = new Intent(holder.itemView.getContext(), LoginActivity.class);
                         holder.itemView.getContext().startActivity(intent);
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
+                        db.contactDao().delete(data2);
                         Intent intent = new Intent(holder.itemView.getContext(), LoginActivity.class);
                         holder.itemView.getContext().startActivity(intent);
                     }

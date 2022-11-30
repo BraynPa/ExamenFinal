@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.vj20222.database.AppDataBase;
 import com.example.vj20222.entities.Contact;
 import com.example.vj20222.factories.RetrofitFactory;
 import com.example.vj20222.services.ContactService;
@@ -27,6 +28,7 @@ public class FormContactActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_contact);
+        AppDataBase db = AppDataBase.getInstance(this);
         Retrofit retrofit = new RetrofitFactory(this).build();
         ContactService service = retrofit.create(ContactService.class);
         btnGuardarC = findViewById(R.id.btnGuardarC);
@@ -45,12 +47,14 @@ public class FormContactActivity extends AppCompatActivity {
                     service.create(contact).enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
+                            db.contactDao().create(contact);
                             Intent intent = new Intent(FormContactActivity.this, ContactActivity.class);
                             startActivity(intent);
                         }
 
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
+                            db.contactDao().create(contact);
                             Intent intent = new Intent(FormContactActivity.this, ContactActivity.class);
                             startActivity(intent);
 
